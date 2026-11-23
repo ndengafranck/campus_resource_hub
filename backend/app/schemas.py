@@ -2,6 +2,10 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, AnyHttpUrl, field_validator
 
 class StrictModel(BaseModel):
+    """
+        extra='forbid': Is just to prevent addition non-defined fields
+        str_strip_whitespace=True: Is to remove white space infront and behind strings
+    """
     model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
 
 class Credentials(StrictModel):
@@ -17,6 +21,17 @@ class ResourceBody(StrictModel):
     url: AnyHttpUrl
     category: Literal['general', 'lecture', 'video', 'exercise'] = 'general'
 
+    """
+        @field_validator('title'): says we run the function title_not_blank() only when the field "title" is checked
+        the field validator decorator can take multiple attributes.
+
+        @classmethod: Decorator mean this method belongs to the class
+        cls: means Class itself
+
+        when the field_validator has multiple parameters thesame rule applies given they are of same type
+
+        Another exists: @modelt_validator(mode="after"), to manage the equality to two fields i a class
+    """
     @field_validator('title')
     @classmethod
     def title_not_blank(cls, value: str) -> str:
